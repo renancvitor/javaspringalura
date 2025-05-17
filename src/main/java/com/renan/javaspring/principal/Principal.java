@@ -1,5 +1,6 @@
 package com.renan.javaspring.principal;
 
+import com.renan.javaspring.model.DadosEpisodio;
 import com.renan.javaspring.model.DadosSerie;
 import com.renan.javaspring.model.DadosTemporada;
 import com.renan.javaspring.service.ConsumoApi;
@@ -37,6 +38,13 @@ public class Principal {
 		}
 		temporadas.forEach(System.out::println);
 
-        // https://www.omdbapi.com/?apikey=1653b8ce&t=Supernatural&Season=5&Episode=3
+//        for (int i = 0; i < dados.totalTemporadas(); i++) {
+//            List<DadosEpisodio> episodiosTemporadas = temporadas.get(i).episodios();
+//            for (int j = 0; j < episodiosTemporadas.size(); j++) {
+//                System.out.println(episodiosTemporadas.get(j).titulo());
+//            }
+//        }
+        
+        temporadas.forEach(t -> t.episodios().forEach(e -> System.out.println(e.titulo())));
     }
 }
