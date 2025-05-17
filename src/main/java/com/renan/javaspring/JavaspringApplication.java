@@ -1,5 +1,6 @@
 package com.renan.javaspring;
 
+import com.renan.javaspring.model.DadosEpisodio;
 import com.renan.javaspring.model.DadosSerie;
 import com.renan.javaspring.service.ConsumoApi;
 import com.renan.javaspring.service.ConverteDados;
@@ -25,5 +26,9 @@ public class JavaspringApplication implements CommandLineRunner {
 		ConverteDados conversor = new ConverteDados();
 		DadosSerie dados = conversor.obterDados(json, DadosSerie.class);
 		System.out.println(dados);
+
+		json = consumoApi.obterDados("https://www.omdbapi.com/?apikey=1653b8ce&t=Supernatural&Season=5&Episode=3");
+		DadosEpisodio dadosEpisodio = conversor.obterDados(json, DadosEpisodio.class);
+		System.out.println(dadosEpisodio);
 	}
 }
