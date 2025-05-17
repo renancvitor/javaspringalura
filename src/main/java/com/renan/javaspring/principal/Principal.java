@@ -3,6 +3,7 @@ package com.renan.javaspring.principal;
 import com.renan.javaspring.model.DadosEpisodio;
 import com.renan.javaspring.model.DadosSerie;
 import com.renan.javaspring.model.DadosTemporada;
+import com.renan.javaspring.model.Episodio;
 import com.renan.javaspring.service.ConsumoApi;
 import com.renan.javaspring.service.ConverteDados;
 
@@ -59,5 +60,12 @@ public class Principal {
                 .sorted(Comparator.comparing(DadosEpisodio::avaliacao).reversed())
                 .limit(5)
                 .forEach(System.out::println);
+
+        List<Episodio> episodios = temporadas.stream()
+                .flatMap(t -> t.episodios().stream()
+                .map(d -> new Episodio(t.numero(), d))
+                ).collect(Collectors.toList());
+
+        episodios.forEach(System.out::println);
     }
 }
