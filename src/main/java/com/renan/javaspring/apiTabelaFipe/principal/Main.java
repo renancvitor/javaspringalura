@@ -5,6 +5,7 @@ import com.renan.javaspring.apiTabelaFipe.service.ConsumoApiFipe;
 import com.renan.javaspring.apiTabelaFipe.service.ConverteDadosFipe;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class Main {
 
@@ -15,11 +16,12 @@ public class Main {
     private final String ENDERECO = "https://parallelum.com.br/fipe/api/v1/";
 
     public void exibeMenuFipe() {
+        System.out.println("\n=== TABELA FIPE ===");
         System.out.println("Digite o tipo de veículo (carros, motos, caminhoes):");
         var tipoVeiculo = scan.nextLine().trim().toLowerCase();
 
         if (!tipoVeiculo.equals("carros") && !tipoVeiculo.equals("motos") && !tipoVeiculo.equals("caminhoes")) {
-            System.out.println("Tipo de veículo inválido.");
+            System.out.println("\nTipo de veículo inválido.");
             return;
         }
         var json = consumoFipe.obterDadosFipe(ENDERECO + tipoVeiculo.replace(" ", "+") + "/marcas/");
@@ -36,7 +38,7 @@ public class Main {
             mapaMarcas.put(marca.nome().toLowerCase(), marca.codigo());
         }
 
-        System.out.println("Digite o nome da marca:");
+        System.out.println("\nDigite o nome da marca:");
         var nomeMarca = scan.nextLine().toLowerCase();
 
         var marcaEncontrada = marcas.stream()
@@ -44,47 +46,49 @@ public class Main {
                 .findFirst();
 
         if (marcaEncontrada.isEmpty()) {
-            System.out.println("Marca não encontrada.");
+            System.out.println("\nMarca não encontrada.");
             return;
         }
 
         var marca = marcaEncontrada.get();
         var jsonMarca = consumoFipe.obterDadosFipe(
-                ENDERECO + tipoVeiculo + "/marcas/" + marca.codigo() + "/modelos"
+                ENDERECO + tipoVeiculo + "/marcas/" + marca.codigo() + "/modelos/"
         );
 
         DadosModelos respostaModelos = conversorFipe.obterDadosFipe(jsonMarca, DadosModelos.class);
         List<Modelo> modelos = respostaModelos.modelos();
         modelos.forEach(m -> System.out.println("Modelo: " + m.nome() + " | Código: " + m.codigo()));
 
-        System.out.println("Digite um trecho do nome do modelo:");
+        System.out.println("\nDigite um trecho do nome do modelo:");
         var trechoModelo = scan.nextLine();
-        Optional<Modelo> modeloBuscado = modelos.stream()
+        List<Modelo> modelosEncontrados = modelos.stream()
                 .filter(m -> m.nome().toLowerCase().contains(trechoModelo.toLowerCase()))
-                .findFirst();
+                .collect(Collectors.toList());
 
-        if (modeloBuscado.isPresent()) {
-            var modelo = modeloBuscado.get();
-            System.out.println("Modelo encontrado: " + modelo.nome());
+        if (modelosEncontrados.isEmpty()) {
+            System.out.println("\nNenhum modelo encontrado com o trecho informado.");
+        } else {
+            for (Modelo modelo : modelosEncontrados) {
+                System.out.println("Modelo encontrado: " + modelo.nome());
 
-            var jsonAnos = consumoFipe.obterDadosFipe(
-                    ENDERECO + tipoVeiculo + "/marcas/" + marca.codigo() + "/modelos/" +
-                            modelo.codigo() + "/anos/"
-            );
+                var jsonAnos = consumoFipe.obterDadosFipe(
+                        ENDERECO + tipoVeiculo + "/marcas/" + marca.codigo() + "/modelos/" +
+                                modelo.codigo() + "/anos/"
+                );
 
-            List<Ano> anos = conversorFipe.obterLista(jsonAnos, Ano.class);
+                List<Ano> anos = conversorFipe.obterLista(jsonAnos, Ano.class);
+                Ano anoSelecionado = anos.get(0);
 
-            Ano anoSelecionado = anos.get(0);
+                var jsonVeiculo = consumoFipe.obterDadosFipe(
+                        ENDERECO + tipoVeiculo + "/marcas/" + marca.codigo() + "/modelos/" +
+                                modelo.codigo() + "/anos/" + anoSelecionado.codigo()
+                );
 
-            var jsonVeiculo = consumoFipe.obterDadosFipe(
-                    ENDERECO + tipoVeiculo + "/marcas/" + marca.codigo() + "/modelos/" +
-                            modelo.codigo() + "/anos/" + anoSelecionado.codigo()
-            );
+                DadosVeiculos dadosVeiculos = conversorFipe.obterDadosFipe(jsonVeiculo, DadosVeiculos.class);
+                Veiculos veiculos = new Veiculos(dadosVeiculos);
 
-            DadosVeiculos dadosVeiculo = conversorFipe.obterDadosFipe(jsonVeiculo, DadosVeiculos.class);
-            Veiculos veiculo = new Veiculos(dadosVeiculo);
-
-            System.out.println("Veículo desserializado: " + veiculo);
+                System.out.println("Veículo encontrado: " + veiculos + "\n");
+            }
         }
     }
 }

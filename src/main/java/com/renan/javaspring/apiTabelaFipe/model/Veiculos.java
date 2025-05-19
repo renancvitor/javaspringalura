@@ -76,7 +76,6 @@ public class Veiculos {
                 ", modelo='" + modelo + '\'' +
                 ", ano=" + ano +
                 ", valor='" + valor + '\'' +
-                ", codigoFipe='" + codigoFipe + '\'' +
                 '}';
     }
 }
