@@ -10,12 +10,12 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 public class FipeSpringApplication implements CommandLineRunner {
 
     public static void main(String[] args) {
-        SpringApplication.run(JavaspringApplication.class, args);
+        SpringApplication.run(FipeSpringApplication.class, args);
     }
 
     @Override
     public void run(String... args) throws Exception {
-        Main principal = new Main();
-        principal.exibeMenuFipe();
+        Main main = new Main();
+        main.exibeMenuFipe();
     }
 }
