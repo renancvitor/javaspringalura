@@ -17,6 +17,9 @@ public class Veiculos {
         this.codigoFipe = dadosVeiculos.codigoFipe();
     }
 
+    public Veiculos() {
+    }
+
     public String getTipo() {
         return tipo;
     }
@@ -39,5 +42,41 @@ public class Veiculos {
 
     public String getCodigoFipe() {
         return codigoFipe;
+    }
+
+    public void setTipo(String tipo) {
+        this.tipo = tipo;
+    }
+
+    public void setMarca(String marca) {
+        this.marca = marca;
+    }
+
+    public void setModelo(String modelo) {
+        this.modelo = modelo;
+    }
+
+    public void setAno(Integer ano) {
+        this.ano = ano;
+    }
+
+    public void setValor(String valor) {
+        this.valor = valor;
+    }
+
+    public void setCodigoFipe(String codigoFipe) {
+        this.codigoFipe = codigoFipe;
+    }
+
+    @Override
+    public String toString() {
+        return "Veiculos{" +
+                "tipo='" + tipo + '\'' +
+                ", marca='" + marca + '\'' +
+                ", modelo='" + modelo + '\'' +
+                ", ano=" + ano +
+                ", valor='" + valor + '\'' +
+                ", codigoFipe='" + codigoFipe + '\'' +
+                '}';
     }
 }

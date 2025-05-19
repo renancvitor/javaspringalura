@@ -67,23 +67,24 @@ public class Main {
             var modelo = modeloBuscado.get();
             System.out.println("Modelo encontrado: " + modelo.nome());
 
-            // Obtém os dados da API para o endpoint de anos
             var jsonAnos = consumoFipe.obterDadosFipe(
-                    ENDERECO + tipoVeiculo + "/marcas/" + marca.codigo() + "/modelos/" + modelo.codigo() + "/anos/2014-3"
+                    ENDERECO + tipoVeiculo + "/marcas/" + marca.codigo() + "/modelos/" +
+                            modelo.codigo() + "/anos/"
             );
 
-// Deserializa o JSON diretamente para a classe Veiculos (sem a necessidade de DadosVeiculoAno)
-            Veiculos veiculo = conversorFipe.obterDadosFipe(jsonAnos, Veiculos.class);
+            List<Ano> anos = conversorFipe.obterLista(jsonAnos, Ano.class);
 
-// Exibe as informações do veículo
-            System.out.println("-----");
-            System.out.println("Tipo: " + veiculo.getTipo());
-            System.out.println("Marca: " + veiculo.getMarca());
-            System.out.println("Modelo: " + veiculo.getModelo());
-            System.out.println("Ano Modelo: " + veiculo.getAno());
-            System.out.println("Valor: " + veiculo.getValor());
-            System.out.println("Código Fipe: " + veiculo.getCodigoFipe());
+            Ano anoSelecionado = anos.get(0);
 
+            var jsonVeiculo = consumoFipe.obterDadosFipe(
+                    ENDERECO + tipoVeiculo + "/marcas/" + marca.codigo() + "/modelos/" +
+                            modelo.codigo() + "/anos/" + anoSelecionado.codigo()
+            );
+
+            DadosVeiculos dadosVeiculo = conversorFipe.obterDadosFipe(jsonVeiculo, DadosVeiculos.class);
+            Veiculos veiculo = new Veiculos(dadosVeiculo);
+
+            System.out.println("Veículo desserializado: " + veiculo);
         }
     }
 }
