@@ -1,9 +1,6 @@
 package com.renan.javaspring.apiTabelaFipe.principal;
 
-import com.renan.javaspring.apiTabelaFipe.model.DadosMarcas;
-import com.renan.javaspring.apiTabelaFipe.model.DadosModelos;
-import com.renan.javaspring.apiTabelaFipe.model.DadosVeiculos;
-import com.renan.javaspring.apiTabelaFipe.model.Modelo;
+import com.renan.javaspring.apiTabelaFipe.model.*;
 import com.renan.javaspring.apiTabelaFipe.service.ConsumoApiFipe;
 import com.renan.javaspring.apiTabelaFipe.service.ConverteDadosFipe;
 
@@ -60,5 +57,33 @@ public class Main {
         List<Modelo> modelos = respostaModelos.modelos();
         modelos.forEach(m -> System.out.println("Modelo: " + m.nome() + " | Código: " + m.codigo()));
 
+        System.out.println("Digite um trecho do nome do modelo:");
+        var trechoModelo = scan.nextLine();
+        Optional<Modelo> modeloBuscado = modelos.stream()
+                .filter(m -> m.nome().toLowerCase().contains(trechoModelo.toLowerCase()))
+                .findFirst();
+
+        if (modeloBuscado.isPresent()) {
+            var modelo = modeloBuscado.get();
+            System.out.println("Modelo encontrado: " + modelo.nome());
+
+            // Obtém os dados da API para o endpoint de anos
+            var jsonAnos = consumoFipe.obterDadosFipe(
+                    ENDERECO + tipoVeiculo + "/marcas/" + marca.codigo() + "/modelos/" + modelo.codigo() + "/anos/2014-3"
+            );
+
+// Deserializa o JSON diretamente para a classe Veiculos (sem a necessidade de DadosVeiculoAno)
+            Veiculos veiculo = conversorFipe.obterDadosFipe(jsonAnos, Veiculos.class);
+
+// Exibe as informações do veículo
+            System.out.println("-----");
+            System.out.println("Tipo: " + veiculo.getTipo());
+            System.out.println("Marca: " + veiculo.getMarca());
+            System.out.println("Modelo: " + veiculo.getModelo());
+            System.out.println("Ano Modelo: " + veiculo.getAno());
+            System.out.println("Valor: " + veiculo.getValor());
+            System.out.println("Código Fipe: " + veiculo.getCodigoFipe());
+
+        }
     }
 }
