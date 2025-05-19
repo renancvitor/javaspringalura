@@ -1,12 +1,13 @@
 package com.renan.javaspring.apiTabelaFipe.principal;
 
 import com.renan.javaspring.apiTabelaFipe.model.DadosMarcas;
+import com.renan.javaspring.apiTabelaFipe.model.DadosModelos;
 import com.renan.javaspring.apiTabelaFipe.model.DadosVeiculos;
+import com.renan.javaspring.apiTabelaFipe.model.Modelo;
 import com.renan.javaspring.apiTabelaFipe.service.ConsumoApiFipe;
 import com.renan.javaspring.apiTabelaFipe.service.ConverteDadosFipe;
 
-import java.util.List;
-import java.util.Scanner;
+import java.util.*;
 
 public class Main {
 
@@ -30,7 +31,34 @@ public class Main {
         List<DadosMarcas> marcas = conversorFipe.obterLista(json, DadosMarcas.class);
         System.out.println(marcas);
 
-        marcas.forEach(m -> System.out.println("Código: " + m.codigo() + " | Marca: " + m.nome()));
+        marcas.forEach(m -> System.out.println("Código: " + m.codigo() +
+                " | Marca: " + m.nome()));
+
+        Map<String, String> mapaMarcas = new HashMap<>();
+        for (DadosMarcas marca : marcas) {
+            mapaMarcas.put(marca.nome().toLowerCase(), marca.codigo());
+        }
+
+        System.out.println("Digite o nome da marca:");
+        var nomeMarca = scan.nextLine().toLowerCase();
+
+        var marcaEncontrada = marcas.stream()
+                .filter(m -> m.nome().toLowerCase().contains(nomeMarca))
+                .findFirst();
+
+        if (marcaEncontrada.isEmpty()) {
+            System.out.println("Marca não encontrada.");
+            return;
+        }
+
+        var marca = marcaEncontrada.get();
+        var jsonMarca = consumoFipe.obterDadosFipe(
+                ENDERECO + tipoVeiculo + "/marcas/" + marca.codigo() + "/modelos"
+        );
+
+        DadosModelos respostaModelos = conversorFipe.obterDadosFipe(jsonMarca, DadosModelos.class);
+        List<Modelo> modelos = respostaModelos.modelos();
+        modelos.forEach(m -> System.out.println("Modelo: " + m.nome() + " | Código: " + m.codigo()));
 
     }
 }
