@@ -1,7 +1,7 @@
 package com.renan.javaspring.apiTabelaFipe;
 
 import com.renan.javaspring.JavaspringApplication;
-import com.renan.javaspring.principal.Principal;
+import com.renan.javaspring.apiTabelaFipe.principal.Main;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -15,7 +15,7 @@ public class FipeSpringApplication implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
-        Principal principal = new Principal();
-        principal.exibeMenu();
+        Main principal = new Main();
+        principal.exibeMenuFipe();
     }
 }
